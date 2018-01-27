@@ -14,25 +14,10 @@ open FSharp.Data
 open XPlot.GoogleCharts
 open XPlot.GoogleCharts.Deedle
 
-// Connect to the WorldBank and access indicators EU and CZ
-// Try changing the code to look at stats for your country!
-let wb = WorldBankData.GetDataContext()
-let cz = wb.Countries.``Czech Republic``.Indicators
-let eu = wb.Countries.``European Union``.Indicators
+let searchUrl = "http://dom.gratka.pl/mieszkania-do-wynajecia/lista/lodzkie,lodz.html"
 
-// Use Deedle to get time-series with school enrollment data
-let czschool = series cz.``2005 PPP conversion factor, GDP (LCU per international $)``
-let euschool = series eu.``2005 PPP conversion factor, GDP (LCU per international $)``
+type Gratka = HtmlProvider<"http://dom.gratka.pl/mieszkania-do-wynajecia/lista/lodzkie,lodz.html">
 
-// Get 5 years with the largest difference between EU and CZ
-abs (czschool - euschool)
-|> Series.sort
-|> Series.rev
-|> Series.take 5
+let advertisements = Gratka.Load("http://dom.gratka.pl/mieszkania-do-wynajecia/lista/lodzkie,lodz,40,d_0,li,sr.html")
 
-// Plot a line chart comparing the two data sets
-// (Opens a web browser window with the chart)
-[ czschool.[1975 .. 2010]; euschool.[1975 .. 2010] ]
-|> Chart.Line
-|> Chart.WithOptions (Options(legend=Legend(position="bottom")))
-|> Chart.WithLabels ["CZ"; "EU"]
+advertisements.Lists.``Mieszkania do wynajęcia Łódź - łódzkie 2``.Values
