@@ -2,6 +2,7 @@ source https://www.nuget.org/api/v2
 
 framework: >= net461
 nuget FsLab
+nuget Hopac
 
 group Build
 source https://www.nuget.org/api/v2
