@@ -17,3 +17,18 @@ open XPlot.GoogleCharts
 open XPlot.GoogleCharts.Deedle
 open Hopac
 
+let createJob jobId delayInMillis = job {
+  printfn "starting job:%d" jobId
+  do! timeOutMillis delayInMillis
+  printfn "completed job:%d" jobId
+}
+
+let jobs = [
+  createJob 1 4000
+  createJob 2 3000
+  createJob 3 2000
+]
+
+let concurrentJobs = jobs |> Job.conIgnore
+
+concurrentJobs |> run
