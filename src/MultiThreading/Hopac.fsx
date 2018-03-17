@@ -16,19 +16,56 @@ open FSharp.Data
 open XPlot.GoogleCharts
 open XPlot.GoogleCharts.Deedle
 open Hopac
+open Hopac.Infixes
 
-let createJob jobId delayInMillis = job {
-  printfn "starting job:%d" jobId
-  do! timeOutMillis delayInMillis
-  printfn "completed job:%d" jobId
+type Product = { 
+  Id : int
+  Name : string
 }
 
-let jobs = [
-  createJob 1 4000
-  createJob 2 3000
-  createJob 3 2000
-]
+// int -> Job<Product>
+let getProduct id = job {
+  
+  // Delay in the place of DB query logic for brevity
+  do! timeOutMillis 2000
 
-let concurrentJobs = jobs |> Job.conIgnore
+  return {Id = id; Name = "My Awesome Product"}
+}
 
-concurrentJobs |> run
+type Review = {
+  ProductId : int
+  Author : string
+  Comment : string
+}
+
+// int -> Job<Review list>
+let getProductReviews id = job {
+  
+  // Delay in the place of an external HTTP API call
+  do! timeOutMillis 3000
+  
+  return [
+    {ProductId = id; Author = "John"; Comment = "It's awesome!"}
+    {ProductId = id; Author = "Sam"; Comment = "Great product"}
+  ]
+}
+
+
+type ProductWithReviews = {
+  Id : int
+  Name : string
+  Reviews : (string * string) list
+}
+
+// int -> Job<ProductWithReviews>
+let getProductWithReviews id = job {
+  let! product, reviews = getProduct id <*> getProductReviews id
+  return {  
+    Id = id
+    Name = product.Name
+    Reviews = reviews |> List.map (fun r -> r.Author,r.Comment)
+  }
+}
+#time "on"
+getProductWithReviews 1 |> run
+#time "off"
