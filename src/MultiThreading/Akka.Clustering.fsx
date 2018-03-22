@@ -1,16 +1,16 @@
 #r "../../packages/System.Collections.Immutable/lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll"
 #r "../../packages/Newtonsoft.Json/lib/net45/Newtonsoft.Json.dll"
 #r "../../packages/Hyperion/lib/net45/Hyperion.dll"
-#r "../../packages/FSPowerPack.Core.Community/Lib/Net40/FSharp.PowerPack.dll"
-#r "../../packages/FSPowerPack.Linq.Community/Lib/Net40/FSharp.PowerPack.Linq.dll"
-#r "../../packages/FsPickler/lib/net45/FsPickler.dll"
 #r "../../packages/Akka/lib/net45/Akka.dll"
+#r "../../packages/Akka.Persistence/lib/net45/Akka.Persistence.dll"
+#r "../../packages/Akka.Cluster/lib/net45/Akka.Cluster.dll"
+#r "../../packages/Akka.Cluster.Sharding/lib/net45/Akka.Cluster.Sharding.dll"
+#r "../../packages/Akka.Cluster.Tools/lib/net45/Akka.Cluster.Tools.dll"
 #r "../../packages/Akka.Serialization.Hyperion/lib/net45/Akka.Serialization.Hyperion.dll"
-#r "../../packages/Reactive.Streams/lib/net45/Reactive.Streams.dll"
-#r "../../packages/Akka.Streams/lib/net45/Akka.Streams.dll"
-#r "../../packages/Akkling/lib/net45/Akkling.dll"
-#r "../../packages/Akkling.Streams/lib/net45/Akkling.Streams.dll"
-
+#r "../../packages/Akkling/lib/net452/Akkling.dll"
+#r "../../packages/Akkling.Persistence/lib/net452/Akkling.Persistence.dll"
+#r "../../packages/Akka.Cluster.Sharding/lib/net45/Akka.Cluster.Sharding.dll"
+#r "../../packages/Akkling.Cluster.Sharding/lib/net452/Akkling.Cluster.Sharding.dll"
 
 open System
 open Akka.Actor
