@@ -1,0 +1,6 @@
+FSharp.Core
+Akka
+Akkling
+Akka.Streams
+Akkling.Streams
+Akkling.Cluster.Sharding
