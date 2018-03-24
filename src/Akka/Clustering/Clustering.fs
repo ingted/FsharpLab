@@ -40,7 +40,8 @@ let main argv =
     // wait a while before starting a second system
     System.Threading.Thread.Sleep 5000
 
-    let entity1 = fac1.ShardRegion.Tell({ EntityId = "john"; Payload = "Hello" })
+    for x in [1..100] do
+        fac1.ShardRegion.Tell({ EntityId = sprintf "john-%d" x; Payload = "Hello" })
 
 
     // check which shards have been build on the second shard region
