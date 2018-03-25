@@ -60,8 +60,18 @@ let main argv =
             for kv in stats.Stats do
                 printfn "\tShard '%s' has %d entities on it" kv.Key kv.Value
         } |> Async.RunSynchronously
+        
+    let printAllEntities shardReg =
+        async {
+            let! (state: CurrentShardRegionState) = (typed shardReg) <? (GetShardRegionState.Instance)
+            for shard in state.Shards do
+                for entity in shard.EntityIds do
+                    printfn "Shard %s/%s/%s" "printer" shard.ShardId entity
+        } |> Async.RunSynchronously
 
     printfn "Shards active on node 'localhost:5000':"
     printShards fac1.ShardRegion
+    printfn "Shard entities"
+    printAllEntities fac1.ShardRegion
     printfn "%A" argv
     0 // return an integer exit code
