@@ -1,14 +1,17 @@
 source https://www.nuget.org/api/v2
 
 framework: >= net461
+nuget FAKE
 nuget FsLab
+nuget FsLab.Runner
 nuget Hopac
 nuget Akka
 nuget Akkling
 nuget Akka.Streams
 nuget Akkling.Streams
 nuget Akkling.Cluster.Sharding
-
+nuget MongoDB.Driver
+nuget Bogus
 group Build
 source https://www.nuget.org/api/v2
 
