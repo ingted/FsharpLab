@@ -24,20 +24,21 @@ open MongoDB.Bson.Serialization.Attributes
 // Some composite primary key
 type Id = { Id: int; Date: DateTime }
 
-type Person(id: int, day: DateTime, name: string) =
-   new () = Person(0, DateTime.Today, "")
+type Person(id: int, day: DateTime, name: string, secondName: string option) =
+   new () = Person(0, DateTime.Today, "", None)
     
    [<BsonId>] member val Id: Id = { Id = id; Date = day } with get, set
    [<BsonElement>] member val Name: string = name with get,set
+   [<BsonElement>] member val SecondName: string option = secondName with get, set
 
    override this.ToString() =
-    sprintf "Id: %A, Name: %s" this.Id this.Name
+    sprintf "Id: %A, Name: %s, SecondName: %A" this.Id this.Name this.SecondName
 
 let client = MongoClient("mongodb://127.0.0.1:27017")
 let db = client.GetDatabase("Test")
 let persons = db.GetCollection<Person>("persons")
 
-//persons.InsertMany([| Person(0, DateTime.Today, "Dominik"); Person(0, DateTime.Today.AddDays(1.), "Dominik tommorow"); |])
+//persons.InsertMany([| Person(0, DateTime.Today, "Dominik", Some("Dominik 2")); Person(0, DateTime.Today.AddDays(1.), "Dominik tommorow", None); |])
 let tommorow = (DateTime.Today.AddDays(1.))
-let find = persons.Find(fun p -> p.Id = { Id = 0; Date = tommorow })
+let find = persons.Find(fun p -> p.Id = { Id = 0; Date = DateTime.Today })
 find.ToList().ToArray()
