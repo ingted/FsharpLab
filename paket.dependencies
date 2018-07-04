@@ -12,6 +12,7 @@ nuget Akkling.Streams
 nuget Akkling.Cluster.Sharding
 nuget MongoDB.Driver
 nuget Bogus
+nuget NodaTime
 group Build
 source https://www.nuget.org/api/v2
 
