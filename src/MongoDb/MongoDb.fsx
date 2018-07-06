@@ -8,7 +8,6 @@
 // run the following in F# Interactive. You can ignore the project
 // (running it doesn't do anything, it just contains this script)
 #r "../../packages/DnsClient/lib/net45/DnsClient.dll"
-open Bogus
 #r "../../packages/MongoDB.Bson/lib/net45/MongoDB.Bson.dll"
 #r "../../packages/MongoDB.Driver.Core/lib/net45/MongoDB.Driver.Core.dll"
 #r "../../packages/MongoDB.Driver/lib/net45/MongoDB.Driver.dll"
@@ -22,24 +21,39 @@ open MongoDB.Bson.Serialization.Attributes
 open MongoDB.Bson
 open NodaTime.Extensions
 open NodaTime
+open Bogus
 
 [<CLIMutable>]
 type Alarm = { [<BsonId>] Id: ObjectId; UserId: int; AlarmTime: int64 }
 
 let client = MongoClient("mongodb://127.0.0.1:27017")
 let db = client.GetDatabase("SmartAlarm")
-let alarms = db.GetCollection<Alarm>("alarms")
+// let alarms = db.GetCollection<Alarm>("alarms")
 
-let generateFakeAlarms(q: int) =
-    let f = Faker<Alarm>()
-                .CustomInstantiator(fun f -> 
-                                { Id = ObjectId.GenerateNewId()
-                                  UserId = f.Random.Number(0, 1000) 
-                                  AlarmTime = f.Date.Future().ToEpoch()}
-                            )
-    f.Generate(q)
-let als = generateFakeAlarms(10000).ToArray()
-alarms.InsertMany(als)
+// let generateFakeAlarms(q: int) =
+//     let f = Faker<Alarm>()
+//                 .CustomInstantiator(fun f -> 
+//                                 { Id = ObjectId.GenerateNewId()
+//                                   UserId = f.Random.Number(0, 1000) 
+//                                   AlarmTime = f.Date.Future()}
+//                             )
+//     f.Generate(q)
+// let als = generateFakeAlarms(10000).ToArray()
+// alarms.InsertMany(als)
 // let tommorow = (DateTime.Today.AddDays(1.))
 // let find = persons.Find(fun p -> p.Id = { Id = 0; Date = DateTime.Today })
 // find.ToList().ToArray()
+
+[<CLIMutable>]
+type Test = { [<BsonId>] Id: int; [<BsonElement>] Value: int; [<BsonElement>] Values: int array }
+
+let generateFakeTestData(q: int) =
+    let f = Faker<Test>()
+                .CustomInstantiator(fun f -> 
+                                { Id = f.UniqueIndex
+                                  Value = f.Random.Number(0, q) 
+                                  Values = f.Random.ListItems([|0..q|]).ToArray()}
+                            )
+    f.Generate(q)
+
+db.GetCollection<Test>("test_values").InsertMany(generateFakeTestData(10000))
