@@ -7,6 +7,7 @@
 // Once you have packages, use Alt+Enter (in VS) or Ctrl+Enter to
 // run the following in F# Interactive. You can ignore the project
 // (running it doesn't do anything, it just contains this script)
+#r "../../packages/FSharp.Core/lib/net45/FSharp.Core.dll"
 #r "../../packages/DnsClient/lib/net45/DnsClient.dll"
 #r "../../packages/MongoDB.Bson/lib/net45/MongoDB.Bson.dll"
 #r "../../packages/MongoDB.Driver.Core/lib/net45/MongoDB.Driver.Core.dll"
@@ -44,19 +45,35 @@ let db = client.GetDatabase("SmartAlarm")
 // let find = persons.Find(fun p -> p.Id = { Id = 0; Date = DateTime.Today })
 // find.ToList().ToArray()
 
-[<CLIMutable>]
-type NastedValue = { Value1: int; Value2: string }
+// [<CLIMutable>]
+// type NastedValue = { Value1: int; Value2: string }
 
-[<CLIMutable>]
-type Test = { [<BsonId>] Id: int; [<BsonElement>] Value: NastedValue; [<BsonElement>] Values: int array }
+// [<CLIMutable>]
+// type Test = { [<BsonId>] Id: int; [<BsonElement>] Value: NastedValue; [<BsonElement>] Values: int array }
 
-let generateFakeTestData(q: int) =
-    let f = Faker<Test>()
-                .CustomInstantiator(fun f -> 
-                                { Id = f.UniqueIndex
-                                  Value = { Value1 = f.Random.Number(0, q); Value2 = f.Lorem.Word() } 
-                                  Values = f.Random.ListItems([|0..q|]).ToArray()}
-                            )
-    f.Generate(q)
-db.DropCollection("test_values")
-db.GetCollection<Test>("test_values").InsertMany(generateFakeTestData(100))
+// let generateFakeTestData(q: int) =
+//     let f = Faker<Test>()
+//                 .CustomInstantiator(fun f -> 
+//                                 { Id = f.UniqueIndex
+//                                   Value = { Value1 = f.Random.Number(0, q); Value2 = f.Lorem.Word() } 
+//                                   Values = f.Random.ListItems([|0..q|]).ToArray()}
+//                             )
+//     f.Generate(q)
+// db.DropCollection("test_values")
+// db.GetCollection<Test>("test_values").InsertMany(generateFakeTestData(100))
+
+
+let asyncFunc() =
+    async {
+        return Some(1)
+    }
+
+let a() =
+    async {
+        match! asyncFunc() with
+        | Some(num) ->
+            printfn "Some(%d)" num
+        | None -> 
+            printfn "None"
+    }
+a() |> Async.RunSynchronously
