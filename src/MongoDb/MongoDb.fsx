@@ -45,15 +45,18 @@ let db = client.GetDatabase("SmartAlarm")
 // find.ToList().ToArray()
 
 [<CLIMutable>]
-type Test = { [<BsonId>] Id: int; [<BsonElement>] Value: int; [<BsonElement>] Values: int array }
+type NastedValue = { Value1: int; Value2: string }
+
+[<CLIMutable>]
+type Test = { [<BsonId>] Id: int; [<BsonElement>] Value: NastedValue; [<BsonElement>] Values: int array }
 
 let generateFakeTestData(q: int) =
     let f = Faker<Test>()
                 .CustomInstantiator(fun f -> 
                                 { Id = f.UniqueIndex
-                                  Value = f.Random.Number(0, q) 
+                                  Value = { Value1 = f.Random.Number(0, q); Value2 = f.Lorem.Word() } 
                                   Values = f.Random.ListItems([|0..q|]).ToArray()}
                             )
     f.Generate(q)
-
-db.GetCollection<Test>("test_values").InsertMany(generateFakeTestData(10000))
+db.DropCollection("test_values")
+db.GetCollection<Test>("test_values").InsertMany(generateFakeTestData(100))
