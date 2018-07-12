@@ -7,7 +7,6 @@
 // Once you have packages, use Alt+Enter (in VS) or Ctrl+Enter to
 // run the following in F# Interactive. You can ignore the project
 // (running it doesn't do anything, it just contains this script)
-#r "../../packages/FSharp.Core/lib/net45/FSharp.Core.dll"
 #r "../../packages/DnsClient/lib/net45/DnsClient.dll"
 #r "../../packages/MongoDB.Bson/lib/net45/MongoDB.Bson.dll"
 #r "../../packages/MongoDB.Driver.Core/lib/net45/MongoDB.Driver.Core.dll"
@@ -20,16 +19,18 @@ open System
 open FSharp.Data
 open MongoDB.Bson.Serialization.Attributes
 open MongoDB.Bson
+open MongoDB.Driver.Linq
 open NodaTime.Extensions
 open NodaTime
 open Bogus
+open System.Linq
 
 [<CLIMutable>]
 type Alarm = { [<BsonId>] Id: ObjectId; UserId: int; AlarmTime: int64 }
 
 let client = MongoClient("mongodb://127.0.0.1:27017")
 let db = client.GetDatabase("SmartAlarm")
-// let alarms = db.GetCollection<Alarm>("alarms")
+let alarms = db.GetCollection<Alarm>("alarms")
 
 // let generateFakeAlarms(q: int) =
 //     let f = Faker<Alarm>()
@@ -62,18 +63,11 @@ let db = client.GetDatabase("SmartAlarm")
 // db.DropCollection("test_values")
 // db.GetCollection<Test>("test_values").InsertMany(generateFakeTestData(100))
 
+let a = (query {
+        for alarm in alarms.AsQueryable() do
+           where (alarm.UserId = 3)
+           select alarm
+    }) 
 
-let asyncFunc() =
-    async {
-        return Some(1)
-    }
-
-let a() =
-    async {
-        match! asyncFunc() with
-        | Some(num) ->
-            printfn "Some(%d)" num
-        | None -> 
-            printfn "None"
-    }
-a() |> Async.RunSynchronously
+let l = (a :?> IMongoQueryable<Alarm>).ToListAsync() |> Async.AwaitTask |> Async.RunSynchronously
+l.ToArray()
